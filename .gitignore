@@ -1,0 +1,9 @@
+# Ignored extensions
+*.o
+*.so
+*.a
+*.exe
+
+# Ignored Folders
+build/
+outdir/

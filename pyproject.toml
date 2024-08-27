@@ -1,0 +1,15 @@
+[tool.scikit-build]
+cmake.verbose = true
+logging.level = "INFO"
+cmake.build-type = "Release"
+
+[build-system]
+requires = [
+    "scikit-build-core",
+    "numpy >= 1.20.0"
+]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "MyModule"
+version = "0.1"

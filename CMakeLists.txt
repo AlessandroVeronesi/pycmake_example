@@ -1,43 +1,52 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.18)
 
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_COMPILER clang++)
-set(CMAKE_CXX_EXTENSIONS OFF)
+include(CMakePrintHelpers)
 
-project(MyModule
-	VERSION 1.0
-	LANGUAGES CXX)
+## Project Name
+project(${SKBUILD_PROJECT_NAME} LANGUAGES CXX)
 
+## Compiler Settings
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-find_package(Python 3.7 REQUIRED Interpreter Development NumPy)
-find_package(PythonLibs REQUIRED)
+## Python 
+find_package(Python3 3.7
+    COMPONENTS Interpreter Development.Module
+    NumPy
+    REQUIRED)
+find_package(PythonLibs 3.7 REQUIRED)
 
-add_library(MyModule SHARED "")
-set_target_properties(MyModule
-	PROPERTIES
-		PREFIX ""
-		OUTPUT_NAME "MyModule"
-		LINKER_LANGUAGE CXX
-		)
+cmake_print_variables(PYTHON_INCLUDE_DIRS)
 
-target_sources(MyModule
-	PRIVATE
-		${CMAKE_CURRENT_LIST_DIR}/src/python_wrapper.cpp
-	)
+if(NOT PYTHON_INCLUDE_DIRS)
+    message(FATAL_ERROR "Python library not found")
+endif()
 
-target_include_directories(MyModule
-	PUBLIC
-		${CMAKE_CURRENT_LIST_DIR}/src/common
-		${PYTHON_INCLUDE_DIRS}
-	)
+## YAML-CPP
+set(YAML_CPP_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu")
+set(YAML_CPP_INCLUDE_DIR "/usr/include")
 
-target_link_libraries(MyModule
-	PUBLIC
-		${PYTHON_LIBRARIES}
-	)
+find_library(YAML_CPP_LIBRARY NAMES yaml-cpp HINTS ${YAML_CPP_LIBRARY_PATH})
 
-install(TARGETS MyModule
-	DESTINATION ${CMAKE_CURRENT_SOURCE_DIR})
+if(NOT YAML_CPP_LIBRARY)
+    message(FATAL_ERROR "yaml-cpp library not found. Please check if yaml-cpp is installed in the specified path.")
+endif()
 
+
+#################################
+## Python Module Specifications
+
+add_library(${SKBUILD_PROJECT_NAME} SHARED "")
+set_target_properties(${SKBUILD_PROJECT_NAME}
+    PROPERTIES
+        PREFIX ""
+        OUTPUT_NAME "${SKBUILD_PROJECT_NAME}"
+        LINKER_LANGUAGE CXX
+        )
+
+target_include_directories(${SKBUILD_PROJECT_NAME} PUBLIC ${YAML_CPP_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS} Python3::NumPy)
+target_link_libraries(${SKBUILD_PROJECT_NAME} PUBLIC ${YAML_CPP_LIBRARY} ${PYTHON_LIBRARIES} Python3::NumPy)
+
+install(TARGETS ${SKBUILD_PROJECT_NAME} DESTINATION .)
+
+add_subdirectory(src)

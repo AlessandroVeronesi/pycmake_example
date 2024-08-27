@@ -9,6 +9,6 @@ static PyObject *MyModuleError;
 static PyObject* C_hello(PyObject *self, PyObject *args);
 
 //* ====  TPP  ==== *//
-#include "tpp/c_hello.cpp"
+#include "tpp/c_hello.tpp"
 
 #endif

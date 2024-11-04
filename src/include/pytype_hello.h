@@ -62,10 +62,12 @@ static PyMemberDef Hello_members[] = {
 //* === Hello Type Methods === *//
 static PyObject* Hello_getValue(HelloObject* self, PyObject* Py_UNUSED(ignored));
 static PyObject* Hello_setValue(HelloObject* self, PyObject* args, PyObject* kwds);
+static PyObject* Hello_copy(HelloObject* self, PyObject* args, PyObject* kwds);
 
 static PyMethodDef Hello_methods[] = {
     {"get_value", (PyCFunction) Hello_getValue, METH_NOARGS,  "Return the hello's value"},
     {"set_value", (PyCFunction) Hello_setValue, METH_VARARGS | METH_KEYWORDS, "Set the hello's value"},
+    {"copy", (PyCFunction) Hello_copy, METH_VARARGS | METH_KEYWORDS, "returns an input copy"},
     {NULL}
 };
 
@@ -115,5 +117,6 @@ static PyTypeObject HelloType = {
 
 // Methods Implementation
 #include "tpp/pytype_hello_methods.tpp"
+#include "tpp/pytype_hello_copy.tpp"
 
 #endif

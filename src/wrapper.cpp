@@ -2,7 +2,7 @@
 #define PY_SSIZE_T_CLEAN
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <Python.h>
-//#include <arrayobject.h>
+#include <numpy/arrayobject.h>
 
 #include <cstring>
 #include <algorithm>
@@ -11,6 +11,7 @@
 
 #include "mymodule_error.h"
 
+#include "inumpy.hpp"
 #include "pytype_hello.h"
 
 
@@ -28,6 +29,7 @@ PyMODINIT_FUNC
 PyInit_MyModule(void)
 {
     PyObject *m;
+    import_array();
 
     // Check HelloType
     if(PyType_Ready(&HelloType) < 0) { return NULL; }
